@@ -34,6 +34,11 @@ CREATE TABLE TPatients
 	 intPatientID			INTEGER				NOT NULL
 	,strFirstName			VARCHAR(255)		NOT NULL
 	,strLastName			VARCHAR(255)		NOT NULL
+	,strAddress				VARCHAR(255)		NOT NULL
+	,strCity				VARCHAR(255)		NOT NULL
+	,strState				VARCHAR(255)		NOT NULL
+	,strZip					VARCHAR(255)		NOT NULL
+	,strGender				VARCHAR(255)		NOT NULL
 	,dtmDOB					DATETIME			NOT NULL
 	,strSSN					VARCHAR(255)		NOT NULL
 	,strInsurance			VARCHAR(255)		NOT NULL
@@ -67,7 +72,7 @@ CREATE TABLE TVisits
 	intVisitID				INTEGER				NOT NULL
 	,intPatientID			INTEGER 			NOT NULL
 	,intDoctorID			INTEGER 			NOT NULL
-	,dtmTime				DATETIME 			NOT NULL
+	,dtmDate				DATETIME 			NOT NULL
 	,strReason				VARCHAR(255)		NOT NULL
 	,strDiagnosis			VARCHAR(255)		NOT NULL
 	,CONSTRAINT TVisits_PK PRIMARY KEY ( intVisitID )
@@ -97,12 +102,12 @@ FOREIGN KEY ( intNurseID ) REFERENCES TNurses ( intNurseID )
 -- --------------------------------------------------------------------------------
 --	Add Sample Data - INSERTS - Step 12
 -- --------------------------------------------------------------------------------
-INSERT INTO TPatients (intPatientID, strFirstName, strLastName, dtmDOB, strSSN, strInsurance, strPhone, strEmail, strEmergencyContact) 
-VALUES				  (1, 'Sylvan', 'Cosyns', '1/3/1970', '524-94-0926', 'Cartwright, MacGyver and Champlin', '850-665-0133', 'scosyns0@china.com.cn', 'Greg Cosyns')
-					 ,(2, 'Sig', 'Combs', '4/3/1972', '488-59-4935', 'Will, Swaniawski and Haag', '387-738-5732', 'scombs1@google.com.br', 'Sean Combs')
-					 ,(3, 'Hinze', 'Gorghetto', '3/20/1959', '341-62-0664', 'Koelpin, Wehner and Hettinger', '249-958-4640', 'hgorghetto2@google.de', 'Ralph Gorghetto')
-					 ,(4, 'Inez', 'Santry', '8/27/1906', '123-46-5785', 'Dicki, Lowe and Fritsch', '930-128-0781', 'isantry3@mysql.com', 'Onez Santry')
-					 ,(5, 'Andie', 'Toleman', '2/21/1976', '541-11-1169', 'Champlin and Sons', '642-137-5355', 'atoleman4@boston.com', 'Maria Toleman')
+INSERT INTO TVisits (intPatientID, strFirstName, strLastName, strAddress, strCity, strState, strZip, strGender, dtmDOB, strSSN, strInsurance, strPhone, strEmail, strEmergencyContact) 
+VALUES 				 (1, 'Annabela', 'McGinny', '996 Arkansas Trail', 'Dallas', 'TX', '77035', 'Female', '1/11/1952', '468-63-2190', 'McKenzie, Hudson and Kilback', '214-980-2440', 'amcginny0@netlog.com', 'Greg Cosyns');
+					,(2, 'Brennen', 'Claisse', '63 Haas Hill', 'Houston', 'TX', '77035', 'Male', '4/10/1957', '367-68-5235', 'Hoppe and Sons', '281-643-7482', 'bclaisse1@theglobeandmail.com', 'Sean Combs');
+					,(3, 'Abdel', 'Saenz', '60 Prairie Rose Terrace', 'Kansas City', 'MO', '64193', 'Male', '4/9/1900', '601-91-3386', 'Parker, Macejkovic and Konopelski', '816-626-7461', 'asaenz2@netvibes.com', 'Ralph Gorghetto');
+					,(4, 'Irma', 'Phil', '2 Glacier Hill Avenue', 'Washington', 'DC', '20525', 'Female', '3/23/1923', '423-39-1308', 'Nolan Group', '202-358-1001', 'iphil3@quantcast.com', 'Onez Santry');
+					,(5, 'Frederigo', 'Golightly', '06332 Granby Drive', 'Philadelphia', 'PA', '19178', 'Male', '5/13/1950', '337-10-9019', 'Torp, Gibson and Gleason', '215-748-0639', 'fgolightly4@angelfire.com', 'Maria Toleman');				 
 INSERT INTO TDoctors (intDoctorID, strFirstName, strLastName, dtmBoards, strAddress, strPhone, strEmail) 
 VALUES 				 (1, 'Shelia', 'McSkin', '9/30/1996', '6 Rutledge Court', '797-954-8306', 'smcskin0@paginegialle.it')
 					,(2, 'Maximilianus', 'Poe', '7/21/1962', '2739 Amoth Point', '594-525-2064', 'mpoe1@sciencedaily.com')
@@ -115,12 +120,12 @@ VALUES				 (1, 'Micheal', 'Hansard', '6/28/1953', '3266 Mandrake Park', '584-261
 					,(3, 'Karissa', 'Cappineer', '12/29/1994', '2 Maywood Trail', '453-477-8427', 'kcappineer2@ftc.gov')
 					,(4, 'Florian', 'Philo', '11/25/1973', '34 Colorado Plaza', '964-601-3141', 'fphilo3@state.gov')
 					,(5, 'Madelene', 'Peaurt', '10/20/1979', '46 Stone Corner Point', '282-306-3606', 'mpeaurt4@prweb.com')
-INSERT INTO TVisits (intVisitID, intPatientID, intDoctorID, dtmTime, strReason, strDiagnosis) 
-VALUES 				 (1, 1, 2, '2/15/1955', '4545 Roth Junction', '701-920-9322')
-					,(2, 5, 4, '6/25/1979', '0 Longview Court', '208-414-9920')
-					,(3, 4, 1, '2/12/1995', '34 Kedzie Avenue', '311-463-5298')
-					,(4, 4, 2, '3/4/1963', '7 Rieder Trail', '763-896-0714')
-					,(5, 5, 1, '8/5/1987', '320 Kensington Parkway', '587-450-6718')
+INSERT INTO TVisits (intVisitID, intPatientID, intDoctorID, dtmDate, strReason, strDiagnosis) 
+VALUES 				 (1, 1, 2, '2/15/2009', '4545 Roth Junction', '701-920-9322')
+					,(2, 5, 4, '6/25/2005', '0 Longview Court', '208-414-9920')
+					,(3, 4, 1, '2/12/2020', '34 Kedzie Avenue', '311-463-5298')
+					,(4, 4, 2, '3/4/2016', '7 Rieder Trail', '763-896-0714')
+					,(5, 5, 1, '8/5/2015', '320 Kensington Parkway', '587-450-6718')
 INSERT INTO TVisitNurses (intVisitNurseID, intVisitID, intNurseID)
 VALUES				 (1, 3, 5)
 					,(2, 2, 4)
@@ -131,3 +136,60 @@ VALUES				 (1, 3, 5)
 -- ------------------------------------------------------------------
 -- Select joins - Step 13
 -- ------------------------------------------------------------------
+
+-- ------------------------------------------------------------------
+-- Select all columns and rows from patient table - Step 13A
+-- ------------------------------------------------------------------
+SELECT
+		TP.intPatientID
+		,TP.strFirstName
+		,TP.strLastName
+		,TP.strAddress
+		,TP.strCity
+		,TP.strState
+		,TP.strZip
+		,TP.strGender
+		,TP.dtmDOB
+		,TP.strSSN
+		,TP.strInsurance
+		,TP.strPhone
+		,TP.strEmail
+		,TP.strEmergencyContact
+FROM
+		TPatients as TP
+
+-- ------------------------------------------------------------------
+-- Select patients from certain zip- Step 13B
+-- ------------------------------------------------------------------
+SELECT
+		TP.intPatientID
+		,TP.strFirstName
+		,TP.strLastName
+		,TP.strAddress
+		,TP.strCity
+		,TP.strState
+		,TP.strZip
+		,TP.strGender
+		,TP.dtmDOB
+		,TP.strSSN
+		,TP.strInsurance
+		,TP.strPhone
+		,TP.strEmail
+		,TP.strEmergencyContact
+FROM
+		TPatients as TP
+WHERE
+		TP.strZip = '77035'
+-- ------------------------------------------------------------------
+-- Select patients first and last name whose last visit was before a date- Step 13C
+-- ------------------------------------------------------------------
+SELECT
+		TP.strFirstName
+		,TP.strLastName
+		,TV.dtmDate
+FROM
+		TPatients as TP
+		,TVisits as TV
+WHERE
+		TV.intPatientID = TP.intPatientID
+AND 	TV.dtmDate < 01/01/2016
