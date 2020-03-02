@@ -192,4 +192,41 @@ FROM
 		,TVisits as TV
 WHERE
 		TV.intPatientID = TP.intPatientID
-AND 	TV.dtmDate < 01/01/2016
+AND 	MAX(TV.dtmDate) < 01/01/2016
+
+-- ------------------------------------------------------------------
+-- Select patients of a specific nurse - Step 13D
+-- ------------------------------------------------------------------
+SELECT
+		TP.strFirstName
+		,TP.strLastName
+FROM
+		TPatients as TP
+		,TNurses as TN
+		,TVisits as TV
+		,TVisitNurses as TVN
+WHERE
+		TP.intPatientID = TV.intPatientID
+AND		TV.intVisitID = TVN.intVisitID
+AND		TN.intNurseID = TVN.intNurseID
+AND		TN.intNurseID = 3
+
+-- ------------------------------------------------------------------
+-- Select patients of a specific doctor - Step 13E
+-- ------------------------------------------------------------------
+SELECT
+		TP.strFirstName
+		,TP.strLastName
+FROM
+		TPatients as TP
+		,TDoctors as TD
+		,TVisits as TV
+WHERE
+		TP.intPatientID = TV.intPatientID
+AND		TD.intDoctorID = TV.intDoctorID
+AND		TD.intDoctorID = 3	
+
+-- ------------------------------------------------------------------
+-- UPDATES - Step 14
+-- ------------------------------------------------------------------
+UPDATE
