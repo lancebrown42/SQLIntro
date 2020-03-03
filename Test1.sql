@@ -20,11 +20,11 @@ SET NOCOUNT ON; -- Report only errors
 
 ---- Drop Table Statements
 
+IF OBJECT_ID('TVisitNurses')	IS NOT NULL DROP TABLE TVisitNurses
+IF OBJECT_ID ('TVisits')		IS NOT NULL DROP TABLE TVisits
+IF OBJECT_ID ('TNurses')		IS NOT NULL DROP TABLE TNurses
 IF OBJECT_ID ('TPatients')		IS NOT NULL DROP TABLE TPatients
 IF OBJECT_ID ('TDoctors')		IS NOT NULL DROP TABLE TDoctors
-IF OBJECT_ID ('TNurses')		IS NOT NULL DROP TABLE TNurses
-IF OBJECT_ID ('TVisits')		IS NOT NULL DROP TABLE TVisits
-IF OBJECT_ID('TVisitNurses')	IS NOT NULL DROP TABLE TVisitNurses
 
 ---- --------------------------------------------------------------------------------
 ----	Create table - Step 9 and 10
@@ -45,6 +45,7 @@ CREATE TABLE TPatients
 	,strPhone				VARCHAR(255)		NOT NULL
 	,strEmail				VARCHAR(255)		NOT NULL
 	,strEmergencyContact	VARCHAR(255)		NOT NULL
+	,strEmergencyPhone		VARCHAR(255)		NOT NULL
 	,CONSTRAINT TPatients_PK PRIMARY KEY ( intPatientID )
 )
 CREATE TABLE TDoctors
@@ -56,6 +57,7 @@ CREATE TABLE TDoctors
 	,strAddress				VARCHAR(255)		NOT NULL
 	,strPhone				VARCHAR(255)		NOT NULL
 	,strEmail				VARCHAR(255)		NOT NULL
+	,CONSTRAINT TDoctors_PK PRIMARY KEY ( intDoctorID )
 )
 CREATE TABLE TNurses
 (
@@ -66,6 +68,7 @@ CREATE TABLE TNurses
 	,strAddress				VARCHAR(255)		NOT NULL
 	,strPhone				VARCHAR(255)		NOT NULL
 	,strEmail				VARCHAR(255)		NOT NULL
+	,CONSTRAINT TNurses_PK PRIMARY KEY ( intNurseID )
 )
 CREATE TABLE TVisits
 (
@@ -82,7 +85,7 @@ CREATE TABLE TVisitNurses
 	intVisitNurseID		INTEGER				NOT NULL
 	,intVisitID			INTEGER				NOT NULL
 	,intNurseID			INTEGER				NOT NULL
-	,CONSTRAINT TVisitNurses_PL PRIMARY KEY ( intVisitNurseID )
+	,CONSTRAINT TVisitNurses_PK PRIMARY KEY ( intVisitNurseID )
 )
 -- --------------------------------------------------------------------------------
 --	Create relationships. Foreign Keys - Step 11
@@ -102,12 +105,12 @@ FOREIGN KEY ( intNurseID ) REFERENCES TNurses ( intNurseID )
 -- --------------------------------------------------------------------------------
 --	Add Sample Data - INSERTS - Step 12
 -- --------------------------------------------------------------------------------
-INSERT INTO TVisits (intPatientID, strFirstName, strLastName, strAddress, strCity, strState, strZip, strGender, dtmDOB, strSSN, strInsurance, strPhone, strEmail, strEmergencyContact) 
-VALUES 				 (1, 'Annabela', 'McGinny', '996 Arkansas Trail', 'Dallas', 'TX', '77035', 'Female', '1/11/1952', '468-63-2190', 'McKenzie, Hudson and Kilback', '214-980-2440', 'amcginny0@netlog.com', 'Greg Cosyns');
-					,(2, 'Brennen', 'Claisse', '63 Haas Hill', 'Houston', 'TX', '77035', 'Male', '4/10/1957', '367-68-5235', 'Hoppe and Sons', '281-643-7482', 'bclaisse1@theglobeandmail.com', 'Sean Combs');
-					,(3, 'Abdel', 'Saenz', '60 Prairie Rose Terrace', 'Kansas City', 'MO', '64193', 'Male', '4/9/1900', '601-91-3386', 'Parker, Macejkovic and Konopelski', '816-626-7461', 'asaenz2@netvibes.com', 'Ralph Gorghetto');
-					,(4, 'Irma', 'Phil', '2 Glacier Hill Avenue', 'Washington', 'DC', '20525', 'Female', '3/23/1923', '423-39-1308', 'Nolan Group', '202-358-1001', 'iphil3@quantcast.com', 'Onez Santry');
-					,(5, 'Frederigo', 'Golightly', '06332 Granby Drive', 'Philadelphia', 'PA', '19178', 'Male', '5/13/1950', '337-10-9019', 'Torp, Gibson and Gleason', '215-748-0639', 'fgolightly4@angelfire.com', 'Maria Toleman');				 
+INSERT INTO TPatients (intPatientID, strFirstName, strLastName, strAddress, strCity, strState, strZip, strGender, dtmDOB, strSSN, strInsurance, strPhone, strEmail, strEmergencyContact, strEmergencyPhone) 
+VALUES 				 (1, 'Annabela', 'McGinny', '996 Arkansas Trail', 'Dallas', 'TX', '77035', 'Female', '1/11/1952', '468-63-2190', 'McKenzie, Hudson and Kilback', '214-980-2440', 'amcginny0@netlog.com', 'Greg Cosyns', '504-169-9418')
+					,(2, 'Brennen', 'Claisse', '63 Haas Hill', 'Houston', 'TX', '77035', 'Male', '4/10/1957', '367-68-5235', 'Hoppe and Sons', '281-643-7482', 'bclaisse1@theglobeandmail.com', 'Sean Combs', '128-232-1492')
+					,(3, 'Abdel', 'Saenz', '60 Prairie Rose Terrace', 'Kansas City', 'MO', '64193', 'Male', '4/9/1900', '601-91-3386', 'Parker, Macejkovic and Konopelski', '816-626-7461', 'asaenz2@netvibes.com', 'Ralph Gorghetto', '994-837-5475')
+					,(4, 'Irma', 'Phil', '2 Glacier Hill Avenue', 'Washington', 'DC', '20525', 'Female', '3/23/1923', '423-39-1308', 'Nolan Group', '202-358-1001', 'iphil3@quantcast.com', 'Onez Santry', '245-985-1283')
+					,(5, 'Frederigo', 'Golightly', '06332 Granby Drive', 'Philadelphia', 'PA', '19178', 'Male', '5/13/1950', '337-10-9019', 'Torp, Gibson and Gleason', '215-748-0639', 'fgolightly4@angelfire.com', 'Maria Toleman', '454-162-8110')		 
 INSERT INTO TDoctors (intDoctorID, strFirstName, strLastName, dtmBoards, strAddress, strPhone, strEmail) 
 VALUES 				 (1, 'Shelia', 'McSkin', '9/30/1996', '6 Rutledge Court', '797-954-8306', 'smcskin0@paginegialle.it')
 					,(2, 'Maximilianus', 'Poe', '7/21/1962', '2739 Amoth Point', '594-525-2064', 'mpoe1@sciencedaily.com')
@@ -155,6 +158,7 @@ SELECT
 		,TP.strPhone
 		,TP.strEmail
 		,TP.strEmergencyContact
+		,TP.strEmergencyPhone
 FROM
 		TPatients as TP
 
@@ -176,6 +180,7 @@ SELECT
 		,TP.strPhone
 		,TP.strEmail
 		,TP.strEmergencyContact
+		,TP.strEmergencyPhone
 FROM
 		TPatients as TP
 WHERE
@@ -192,7 +197,7 @@ FROM
 		,TVisits as TV
 WHERE
 		TV.intPatientID = TP.intPatientID
-AND 	MAX(TV.dtmDate) < 01/01/2016
+AND 	TV.dtmDate < '01/01/2016'
 
 -- ------------------------------------------------------------------
 -- Select patients of a specific nurse - Step 13D
@@ -224,9 +229,35 @@ FROM
 WHERE
 		TP.intPatientID = TV.intPatientID
 AND		TD.intDoctorID = TV.intDoctorID
-AND		TD.intDoctorID = 3	
+AND		TD.intDoctorID = 2
 
 -- ------------------------------------------------------------------
 -- UPDATES - Step 14
 -- ------------------------------------------------------------------
-UPDATE
+-- ------------------------------------------------------------------
+-- UPDATES - Step 14A - Update emergency contact for a patient
+-- ------------------------------------------------------------------
+SELECT * FROM TPatients
+UPDATE 	TPatients
+SET 	strEmergencyContact = 'Bob Jones'
+		,strEmergencyPhone = '440-212-4402'
+WHERE 	intPatientID = 3 
+SELECT * FROM TPatients
+-- ------------------------------------------------------------------
+-- DELETES - Step 15
+-- ------------------------------------------------------------------
+-- ------------------------------------------------------------------
+-- DELETES - Step 15A - Delete a visit of a patient
+-- ------------------------------------------------------------------
+SELECT * FROM TVisits
+
+DELETE 	TVisits
+WHERE 	intPatientID = 4
+AND 	intVisitID = 4
+SELECT * FROM TVisits
+
+-- SELECT * FROM TPatients
+-- SELECT * FROM TDoctors
+-- SELECT * FROM TNurses
+-- SELECT * FROM TVisits
+-- SELECT * FROM TVisitNurses
