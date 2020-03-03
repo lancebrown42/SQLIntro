@@ -197,7 +197,7 @@ FROM
 		,TVisits as TV
 WHERE
 		TV.intPatientID = TP.intPatientID
-AND 	TV.dtmDate < '01/01/2016'
+AND 	TV.dtmDate < '01/01/2010'
 
 -- ------------------------------------------------------------------
 -- Select patients of a specific nurse - Step 13D
@@ -250,14 +250,10 @@ SELECT * FROM TPatients
 -- DELETES - Step 15A - Delete a visit of a patient
 -- ------------------------------------------------------------------
 SELECT * FROM TVisits
+DELETE TVisitNurses
+WHERE 	intVisitID = 4
 
 DELETE 	TVisits
 WHERE 	intPatientID = 4
 AND 	intVisitID = 4
 SELECT * FROM TVisits
-
--- SELECT * FROM TPatients
--- SELECT * FROM TDoctors
--- SELECT * FROM TNurses
--- SELECT * FROM TVisits
--- SELECT * FROM TVisitNurses
