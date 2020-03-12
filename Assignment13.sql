@@ -1,7 +1,7 @@
 ---- --------------------------------------------------------------------------------
 ---- Name: Lance Brown
 ---- Class: IT-111
----- Abstract: Assignment 9
+---- Abstract: Assignment 13
 ---- --------------------------------------------------------------------------------
 
 ---- --------------------------------------------------------------------------------
@@ -22,6 +22,9 @@ SET NOCOUNT ON; -- Report only errors
 
 IF OBJECt_ID ('TCustomerSongs')	IS NOT NULL DROP TABLE TCustomerSongs
 IF OBJECt_ID ('TCustomers')		IS NOT NULL DROP TABLE TCustomers
+IF OBJECT_ID ('TStates')		IS NOT NULL DROP TABLE TStates
+IF OBJECT_ID ('TGenders')		IS NOT NULL DROP TABLE TGenders
+IF OBJECT_ID ('TRaces')			IS NOT NULL DROP TABLE TRaces
 IF OBJECt_ID ('TSongs')			IS NOT NULL DROP TABLE TSongs
 IF OBJECt_ID ('TArtists')		IS NOT NULL DROP TABLE TArtists
 
@@ -37,13 +40,13 @@ CREATE TABLE TStates
 	,strStateLong		VARCHAR(255)		NOT NULL
 	,CONSTRAINT TStates_PK PRIMARY KEY ( intStateID )
 )
-CREATE TABLE TGender
+CREATE TABLE TGenders
 (
 	 intGenderID		INTEGER 			NOT NULL
 	,strGender			VARCHAR(255)		NOT NULL
 	,CONSTRAINT TGenders_PK PRIMARY KEY ( intGenderID )
 )
-CREATE TABLE TRace
+CREATE TABLE TRaces
 (
 	 intRaceID			INTEGER 			NOT NULL
 	,strRace 			VARCHAR(255)		NOT NULL
@@ -125,7 +128,7 @@ VALUES					   (1, 'Frank Zappa')
 						  ,(2, 'Dweezl Zappa')
 						  ,(3, 'Wolfgang Amadeus Mozart')
 
-INSERT into TStates
+INSERT into TStates( intStateID, strStateAbbrv, strStateLong)
 VALUES 					(1, 'AL', 'Alabama')
 						,(2,'AK', 'Alaska')
 						,(3,'AL', 'Alabama')
@@ -180,12 +183,23 @@ VALUES 					(1, 'AL', 'Alabama')
 						,(52,'WI', 'Wisconsin')
 						,(53,'WY', 'Wyoming')
 
-INSERT INTO TCustomers (intCustomerID, strFirstName, strLastName, strAddress, strCity, strState, strZip, strGender, strRace, dtmDateOfBirth)
-VALUES				  (1, 'Had', 'Vedeshkin', '8770 Arapahoe Crossing', 'Madison', 'WI', '53779', 'Male', 'Kiowa', '8/12/1920')
-					 ,(2, 'Pearline', 'Beenham', '7 Warbler Road', 'Memphis', 'TN', '38136', 'Female', 'Latin American Indian', '6/23/2001')
-					 ,(3, 'Willie', 'Medforth', '217 Rusk Place', 'Norfolk', 'VA', '23551', 'Male', 'Japanese', '3/24/1909')
-					 ,(4, 'Katti', 'Stribling', '23929 Knutson Drive', 'Peoria', 'IL', '61605', 'Female', 'Navajo', '11/17/2000')
-					 ,(5, 'Roley', 'Maud', '4626 Schmedeman Terrace', 'Saint Paul', 'MN', '55115', 'Male', 'Cuban', '4/15/1999')
+INSERT INTO TGenders( intGenderID, strGender)
+VALUES 					(1, 'Female')
+						,(2, 'Male')
+						,(3, 'Other')
+INSERT INTO TRaces( intRaceID, strRace)
+VALUES					(1, 'African-American')
+						,(2, 'Asian')
+						,(3, 'Caucasian')
+						,(4, 'Hispanic')
+						,(5, 'Native American')
+
+INSERT INTO TCustomers (intCustomerID, strFirstName, strLastName, strAddress, strCity, intStateID, strZip, intGenderID, intRaceID, dtmDateOfBirth)
+VALUES				  (1, 'Had', 'Vedeshkin', '8770 Arapahoe Crossing', 'Madison', 52, '53779', 2, 5, '8/12/1920')
+					 ,(2, 'Pearline', 'Beenham', '7 Warbler Road', 'Memphis', 45, '38136', 1, 4, '6/23/2001')
+					 ,(3, 'Willie', 'Medforth', '217 Rusk Place', 'Norfolk', 49, '23551', 2, 2, '3/24/1909')
+					 ,(4, 'Katti', 'Stribling', '23929 Knutson Drive', 'Peoria', 15, '61605', 1, 3, '11/17/2000')
+					 ,(5, 'Roley', 'Maud', '4626 Schmedeman Terrace', 'Saint Paul', 25, '55115', 2, 1, '4/15/1999')
 
 INSERT INTO TSongs ( intSongID, intArtistID, strName, dtmDateRecorded, strGenre, strRecordLabel)
 VALUES				 ( 1, 2, 'Escape Character', '9/13/2019', 'Electronica', 'Apple Records')
@@ -201,105 +215,37 @@ VALUES						( 1, 1, 1)
 						   ,( 4, 4, 2)
 						   ,( 5, 5, 1)
 
-SELECT * FROM TCustomers
-SELECT * FROM TSongs
-SELECT * FROM TArtists
-SELECT * FROM TCustomerSongs
 
 
 -- ---------------------------------------------------------------------
 -- Select JOINS 
 -- ---------------------------------------------------------------------
 -- ---------------------------------------------------------------------
--- Select All Customers song info
+-- Select All Customers state info
 -- ---------------------------------------------------------------------
-SELECT  
-	TC.strFirstName
-	,TC.strLastName
-	,TC.strAddress
-	,TC.strCity
-	,TC.strState
-	,TC.strZip
-	,TC.strGender
-	,TC.strRace
-	,TC.dtmDateOfBirth
-	,TS.strName
-	,TS.strGenre
-	,TS.strRecordLabel
-	,TA.strName
-FROM 
-	TCustomers AS TC
-	,TCustomerSongs AS TCS
-	,TSongs AS TS
-	,TArtists AS TA
-WHERE TC.intCustomerID = TCS.intCustomerID
-AND TCS.intSongID = TS.intSongID
-AND TS.intArtistID = TA.intArtistID
------------------------------
--- Select by customer last name
------------------------------
-SELECT  
-	TC.strFirstName
-	,TC.strLastName
-	,TC.strAddress
-	,TC.strCity
-	,TC.strState
-	,TC.strZip
-	,TC.strGender
-	,TC.strRace
-	,TC.dtmDateOfBirth
-	,TS.strName
-	,TS.strGenre
-	,TS.strRecordLabel
-	,TS.dtmDateRecorded
-	,TA.strName
-FROM 
-	TCustomers AS TC
-	,TCustomerSongs AS TCS
-	,TSongs AS TS
-	,TArtists AS TA
-WHERE TC.intCustomerID = TCS.intCustomerID
-AND TCS.intSongID = TS.intSongID
-AND TS.intArtistID = TA.intArtistID
-AND TC.strLastName = 'Maud'
+SELECT 	strFirstName
+		,strLastName
+		,strStateLong
+FROM	TCustomers
+		,TStates
+WHERE	TCustomers.intStateID = TStates.intStateID
 
--- --------------------------------
--- Select artists
------------------------------------
-SELECT
-	TA.strName
-	,TS.strName
-	,TS.strGenre
-	,TS.strRecordLabel
-	,TS.dtmDateRecorded
-FROM
-	TArtists as TA
-	,TSongs as TS
-WHERE TA.intArtistID = TS.intArtistID
+-- ---------------------------------------------------------------------
+-- Select All Customers gender info
+-- ---------------------------------------------------------------------
+SELECT 	strFirstName
+		,strLastName
+		,strGender
+FROM	TCustomers
+		,TGenders
+WHERE	TCustomers.intGenderID = TGenders.intGenderID
 
------------------------------
--- Select by date recorded
------------------------------
-SELECT  
-	TC.strFirstName
-	,TC.strLastName
-	,TC.strAddress
-	,TC.strCity
-	,TC.strState
-	,TC.strZip
-	,TC.strGender
-	,TC.strRace
-	,TC.dtmDateOfBirth
-	,TS.strName
-	,TS.strGenre
-	,TS.strRecordLabel
-	,TA.strName
-FROM 
-	TCustomers AS TC
-	,TCustomerSongs AS TCS
-	,TSongs AS TS
-	,TArtists AS TA
-WHERE TC.intCustomerID = TCS.intCustomerID
-AND TCS.intSongID = TS.intSongID
-AND TS.intArtistID = TA.intArtistID
-AND TS.dtmDateRecorded > '2000-01-01'
+-- ---------------------------------------------------------------------
+-- Select All Customers race info
+-- ---------------------------------------------------------------------
+SELECT 	strFirstName
+		,strLastName
+		,strRace
+FROM	TCustomers
+		,TRaces
+WHERE	TCustomers.intRaceID = TRaces.intRaceID
