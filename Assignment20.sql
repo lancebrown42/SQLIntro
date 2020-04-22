@@ -1,7 +1,7 @@
 ---- --------------------------------------------------------------------------------
 ---- Name: Lance Brown
 ---- Class: IT-111
----- Abstract: Assignment 18
+---- Abstract: Assignment 20
 ---- --------------------------------------------------------------------------------
 
 ---- --------------------------------------------------------------------------------
@@ -11,7 +11,7 @@ USE dbSQL1;     -- Get out of the master database
 SET NOCOUNT ON; -- Report only errors
 
 ---- --------------------------------------------------------------------------------
-----						Problem #1
+----						
 ---- --------------------------------------------------------------------------------
 
 ---- --------------------------------------------------------------------------------
@@ -327,8 +327,8 @@ VALUES 					(1, 'Female')
 						,(3, 'Other')
 
 INSERT INTO TEvents(intEventID, dtmEventYear)
-VALUES 					(1, 2012)
-						,(2, 2020)
+VALUES 					(1, '2012')
+						,(2, '2020')
 INSERT INTO TGolfers (intGolferID, strFirstName, strLastName, strAddress, strCity, intStateID, strZip, strPhone, strEmail, intGenderID, intShirtSizeID) 
 VALUES 					 (1, 'Osbourn', 'Paver', '57665 Londonderry Court', 'New York City', 34, '10175', '212-190-6759', 'opaver0@tamu.edu', 1, 4)
 						,(2, 'Erich', 'OLunny', '16884 Mockingbird Circle', 'Young America', 25, '55564', '952-228-7456', 'eolunny1@freewebs.com', 1, 3)
@@ -367,7 +367,7 @@ VALUES 					 (1, 1, 3)
 						,(5, 2, 6)
 						,(6, 2, 2)
 						,(7, 2, 1)
-						,(8, 1, 3)
+						,(8, 1, 4)
 						,(9, 1, 5)
 						,(10, 2, 5)
 INSERT INTO TCorporateSponsorshipTypes(intCorporateSponsorshipTypeID, strCorporateSponsorshipType)
@@ -428,12 +428,12 @@ VALUES					(1, 6, 5)
 						,(10, 7, 4)		
 INSERT INTO TEventGolferSponsors (intEventGolferSponsorID, intEventGolferID, intSponsorID, dtmPledgeDate, dblPledgePerHole, intPaymentTypeID, intPaymentStatuseID)
 VALUES					 (1, 5, 4, '7/27/2016', 70.58, 1, 2)
-						,(2, 4, 2, '7/10/2012', 91.54, 1, 1)
-						,(3, 1, 10, '3/2/2020', 99.63, 3, 3)
+						,(2, 4, 2, '7/10/2012', 191.54, 1, 1)
+						,(3, 1, 10, '3/2/2020', 299.63, 3, 3)
 						,(4, 2, 8, '3/14/2013', 73.17, 3, 3)
-						,(5, 3, 1, '11/19/2015', 80.73, 3, 3)
-						,(6, 2, 1, '7/5/2012', 55.53, 1, 1)
-						,(7, 7, 7, '1/28/2016', 62.13, 3, 1)
+						,(5, 3, 1, '11/19/2015', 180.73, 3, 3)
+						,(6, 2, 1, '7/5/2012', 355.53, 1, 1)
+						,(7, 7, 7, '1/28/2016', 262.13, 3, 1)
 						,(8, 5, 3, '3/7/2019', 91.61, 2, 3)
 						,(9, 7, 2, '9/13/2018', 34.42, 2, 2)
 						,(10, 5, 3, '3/5/2019', 7.76, 3, 1)
@@ -449,3 +449,151 @@ VALUES					(1, 3, 7)
 						,(2, 2, 4)
 						,(3, 1, 1)
 						
+---- --------------------------------------------------------------------------------
+---- 1)	Show all golfers for the most current event while showing those golfers that played in a previous event who is not golfing in the current event. 			
+---- --------------------------------------------------------------------------------
+SELECT 
+	TG.strFirstName as FirstName
+	,TG.strLastName as LastName
+	,TE.dtmEventYear as 'Year'
+FROM
+	TGolfers as TG
+		JOIN TEventGolfers as TEG
+			ON TG.intGolferID = TEG.intGolferID
+		JOIN TEvents as TE
+			ON TEG.intEventID = TE.intEventID
+WHERE TE.dtmEventYear IN (SELECT dtmEventYear FROM TEvents WHERE intEventID = 2)
+						OR TG.intGolferID NOT IN (SELECT TG.intGolferID from TGolfers as TG JOIN TEventGolfers as TEG ON TG.intGolferID = TEG.intGolferID JOIN TEvents as TE on TE.intEventID = TEG.intEventID WHERE TE.intEventID = 2)
+ORDER BY
+	TE.dtmEventYear
+---- --------------------------------------------------------------------------------
+---- 2)	Show all golfers for the most current event and the donations they received between two dates (even if they did not receive a donation during this period).   NOTE:  Use...Between!				
+---- --------------------------------------------------------------------------------
+SELECT
+	TG.strFirstName as FirstName
+	,TG.strLastName as LastName
+	,SUM(TEGS.dblPledgePerHole * 18) as Donations
+FROM
+	TGolfers as TG
+		JOIN TEventGolfers as TEG
+			ON TG.intGolferID = TEG.intGolferID
+		JOIN TEvents as TE
+			ON TEG.intEventID = TE.intEventID
+		JOIN TEventGolferSponsors as TEGS
+			ON TEG.intEventGolferID = TEGS.intEventGolferID
+WHERE TEGS.dtmPledgeDate BETWEEN '01/01/2017' AND '04/20/2020'
+		AND TE.intEventID = 2
+GROUP BY
+	TG.strFirstName, TG.strLastName
+ORDER BY TG.strLastName
+---- --------------------------------------------------------------------------------
+---- 3)	Show total pledged/donated per golfer for the current event.  For those playing that do not have pledges, show their total as zero.  (Note:…all you need to do is make this an outer join).  		
+---- --------------------------------------------------------------------------------
+SELECT
+	TG.strLastName + ', ' + TG.strFirstName as Name
+	,SUM(ISNULL(TEGS.dblPledgePerHole * 18, '0'))
+FROM TGolfers as TG
+	LEFT JOIN TEventGolfers as TEG
+		ON TG.intGolferID = TEG.intGolferID
+	LEFT JOIN TEvents as TE
+		on TE.intEventID = TEG.intEventID
+	FULL JOIN TEventGolferSponsors as TEGS
+		ON TEG.intEventGolferID = TEGS.intEventGolferID
+WHERE TE.intEventID = 2
+GROUP BY
+	TG.strLastName
+	,TG.strFirstName
+
+ORDER BY
+	TG.strLastName
+---- --------------------------------------------------------------------------------
+---- 4)	Show ONLY golfers who played in previous events that are not playing in the current event. 		
+---- --------------------------------------------------------------------------------
+SELECT 
+	TG.strLastName + ', ' + TG.strFirstName as Name
+	,Year(TE.dtmEventYear) as 'Year'
+FROM
+	TGolfers as TG
+		JOIN TEventGolfers as TEG
+			ON TG.intGolferID = TEG.intGolferID
+		JOIN TEvents as TE
+			ON TEG.intEventID = TE.intEventID
+WHERE TE.dtmEventYear NOT IN (SELECT dtmEventYear FROM TEvents WHERE intEventID = 2)
+ORDER BY
+	TE.dtmEventYear
+---- --------------------------------------------------------------------------------
+---- 5)	Show ONLY sponsors who donated $100 or more in previous events that have not donated for the current event.  Show the golfer(s), the event, and representative sport/club that each of these sponsors donated in the past. 				
+---- --------------------------------------------------------------------------------
+SELECT
+	TG.strLastName + ', ' + TG.strFirstName as Name
+	,Year(TE.dtmEventYear) as 'Year'
+	,SUM(TEGS.dblPledgePerHole * 18) as Donation
+FROM TEventGolferSponsors as TEGS
+	LEFT JOIN TEventGolfers as TEG
+		ON TEGS.intEventGolferID = TEG.intEventGolferID
+	LEFT JOIN TEvents as TE
+		ON TEG.intEventID = TE.intEventID
+	FULL JOIN TGolfers as TG
+		ON TEG.intGolferID = TG.intGolferID
+WHERE TEGS.dblPledgePerHole NOT IN (SELECT TEventGolferSponsors.dblPledgePerHole FROM TEventGolferSponsors JOIN TEventGolfers on TEventGolferSponsors.intEventGolferID = TEventGolfers.intEventGolferID JOIN TEvents on TEventGolfers.intEventID = TEvents.intEventID WHERE TEvents.intEventID = 2)
+GROUP BY TG.strLastName, TG.strFirstName, TE.dtmEventYear
+---- --------------------------------------------------------------------------------
+---- 6)	Show corporate sponsors that have purchased a corporate sponsorship in the past but have not in the current event.  Show the event(s) and the type(s) of sponsorships purchased per sponsor.  			
+---- --------------------------------------------------------------------------------
+SELECT	
+		TCS.intCorporateSponsorID as CorporateID
+		,Year(TE.dtmEventYear) as 'Year'
+		,TCST.strCorporateSponsorshipType as Type
+
+FROM TCorporateSponsors as TCS
+	LEFT JOIN TEventCorporateSponsorshipTypeCorporateSponsors as TECSTCS
+		on TCS.intCorporateSponsorID = TECSTCS.intCorporateSponsorID
+	FULL JOIN TCorporateSponsorshipTypes as TCST
+		on TECSTCS.intCorporateSponsorshipTypeID = TCST.intCorporateSponsorshipTypeID
+	LEFT JOIN TEventCorporateSponsorshipTypes as TECST
+		on TCST.intCorporateSponsorshipTypeID = TECST.intCorporateSponsorshipTypeID
+	FULL JOIN TEvents as TE
+		on TECST.intEventID = TE.intEventID
+WHERE TCS.intCorporateSponsorID NOT IN (SELECT TCS.intCorporateSponsorID FROM TCorporateSponsors as TCS
+								LEFT JOIN TEventCorporateSponsorshipTypeCorporateSponsors as TECSTCS
+									on TCS.intCorporateSponsorID = TECSTCS.intCorporateSponsorID
+								FULL JOIN TCorporateSponsorshipTypes as TCST
+									on TECSTCS.intCorporateSponsorshipTypeID = TCST.intCorporateSponsorshipTypeID
+								LEFT JOIN TEventCorporateSponsorshipTypes as TECST
+									on TCST.intCorporateSponsorshipTypeID = TECST.intCorporateSponsorshipTypeID
+								FULL JOIN TEvents as TE
+									on TECST.intEventID = TE.intEventID
+								WHERE TE.intEventID = 2)
+		AND TCST.strCorporateSponsorshipType != 'NULL'
+
+---- --------------------------------------------------------------------------------
+---- 7)	Show corporate sponsors that have purchased more than 1 corporate sponsorships where the combined total was over $500.00 in the past but has not purchased a sponsorship in the current event.  Show the event(s), the type(s) of sponsorships purchased, and the price for each per sponsor.  			
+---- --------------------------------------------------------------------------------
+SELECT	
+		TCS.intCorporateSponsorID as CorporateID
+		,Year(TE.dtmEventYear) as 'Year'
+		,SUM(TECST.dblSponsorshipCost) as Sponsorship
+		,TCST.strCorporateSponsorshipType as Type
+
+FROM TCorporateSponsors as TCS
+	LEFT JOIN TEventCorporateSponsorshipTypeCorporateSponsors as TECSTCS
+		on TCS.intCorporateSponsorID = TECSTCS.intCorporateSponsorID
+	FULL JOIN TCorporateSponsorshipTypes as TCST
+		on TECSTCS.intCorporateSponsorshipTypeID = TCST.intCorporateSponsorshipTypeID
+	LEFT JOIN TEventCorporateSponsorshipTypes as TECST
+		on TCST.intCorporateSponsorshipTypeID = TECST.intCorporateSponsorshipTypeID
+	FULL JOIN TEvents as TE
+		on TECST.intEventID = TE.intEventID
+WHERE TCS.intCorporateSponsorID NOT IN (SELECT TCS.intCorporateSponsorID FROM TCorporateSponsors as TCS
+								LEFT JOIN TEventCorporateSponsorshipTypeCorporateSponsors as TECSTCS
+									on TCS.intCorporateSponsorID = TECSTCS.intCorporateSponsorID
+								FULL JOIN TCorporateSponsorshipTypes as TCST
+									on TECSTCS.intCorporateSponsorshipTypeID = TCST.intCorporateSponsorshipTypeID
+								LEFT JOIN TEventCorporateSponsorshipTypes as TECST
+									on TCST.intCorporateSponsorshipTypeID = TECST.intCorporateSponsorshipTypeID
+								FULL JOIN TEvents as TE
+									on TECST.intEventID = TE.intEventID
+								WHERE TE.intEventID = 2)
+GROUP BY TCS.intCorporateSponsorID, TE.dtmEventYear, TECST.dblSponsorshipCost, TCST.strCorporateSponsorshipType
+HAVING TECST.dblSponsorshipCost > 500
+
